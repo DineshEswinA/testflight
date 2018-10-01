@@ -14,15 +14,11 @@ def login():
         'Accept': 'application/json, text/javascript'
     }
     r = requests.post(url, data=json.dumps(payload), headers=headers)
-    if r.status_code == 200:
-        print('Login Success')
     return r.cookies
 
 def getFirstContentProviderId(cookie):
     url = "https://itunesconnect.apple.com/WebObjects/iTunesConnect.woa/ra/user/detail"
     res = requests.get(url, cookies=cookie)
-    if res.status_code == 200:
-        print('Content ProviderId get Success')
     data = res.json()
     accounts = data['data']['associatedAccounts']
     for acc in accounts:
@@ -33,14 +29,11 @@ def getFirstContentProviderId(cookie):
 def getDefaultExternalGroupId(contentProviderId, appid, cookie):
     url = 'https://itunesconnect.apple.com/testflight/v2/providers/{teamId}/apps/{appId}/groups'.format(teamId=contentProviderId, appId=appid)
     resp = requests.get(url, cookies=cookie)
-    if resp.status_code == 200:
-        print('GroupId get Success')
     groups = resp.json()['data'];
     for group in groups:
         if group['name'] == 'Auto Beta Testers':	#Group name what you created in your itunes account.
             return group['id']
     return None
-    # return "2574c871-3f69-497c-9694-3ce2185271a6"
 
 def addTester(email, contentProviderId, appId, groupId, cookie, firstname='', lastname=''):
     params = {'email': email, 'firstName': firstname, 'lastName': lastname}
@@ -73,7 +66,7 @@ def addTester(email, contentProviderId, appId, groupId, cookie, firstname='', la
 
 def main():
     appid = "1126390498"		#Appid for your itunes App
-    email = 'example@vajro.com'
+    email = 'example@gmail.com'
     firstname = 'xxx'
     lastname = 'yyy'
     cookie = login()
